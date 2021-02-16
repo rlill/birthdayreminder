@@ -90,7 +90,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.tiekinetix.evision2tsb.App</mainClass>
+									<mainClass>rlill.reminder.App</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

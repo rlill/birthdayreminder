@@ -1,6 +1,7 @@
 package rlill.reminder;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -13,7 +14,8 @@ import java.util.Properties;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
@@ -21,13 +23,15 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+
 public class App implements ActionListener, FocusListener {
 
 	private static Logger LOG = Logger.getLogger(App.class);
 
 	private JFrame mainFrame;
 
-	private JTextArea textArea;
+	private JTable table;
+	private DefaultTableModel tableModel;
 	private JButton button;
 
 	private String dbUrl;
@@ -87,9 +91,15 @@ public class App implements ActionListener, FocusListener {
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(600, 400);
 
-        textArea = new JTextArea(2, 0);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        tableModel = new AppTableModel(new String [] {}, 0);
+        tableModel.addColumn("Date");
+        tableModel.addColumn("Name");
+        tableModel.addColumn("Age");
+    	table = new JTable(tableModel);
+    	table.setFont(new Font("SansSerif", Font.PLAIN, 16));
+    	table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
+    	table.setRowHeight(25);
+        JScrollPane scrollPane = new JScrollPane(table);
         mainFrame.add(scrollPane, BorderLayout.CENTER);
 
 		button = new JButton("refresh");
@@ -97,7 +107,6 @@ public class App implements ActionListener, FocusListener {
 		mainFrame.add(button, BorderLayout.PAGE_END);
 
         mainFrame.setVisible(true);
-
 	}
 
 
@@ -141,12 +150,21 @@ public class App implements ActionListener, FocusListener {
 			return;
 		}
 
-		StringBuilder sb = new StringBuilder();
-		for (String s : db.nextBirthdays(30)) {
-			sb.append(s).append("\n");
-		}
-		textArea.setText(sb.toString());
+		db.nextBirthdays(30, tableModel);
 
 	}
+
+    private static class AppTableModel extends DefaultTableModel {
+    	private static final long serialVersionUID = -4307863734765833642L;
+
+		public AppTableModel(String[] strings, int i) {
+			super(strings, i);
+		}
+
+		@Override
+    	public boolean isCellEditable(int row, int column) {
+    		return false;
+    	}
+    }
 
 }
