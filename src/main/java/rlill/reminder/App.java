@@ -1,7 +1,9 @@
 package rlill.reminder;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -10,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -37,8 +40,11 @@ public class App implements ActionListener, FocusListener {
 	private String dbUrl;
 	private String dbUser;
 	private String dbPass;
+	private int future;
+	private int flags;
 
 	private final static String PROPERTIES = "birthdayreminder.properties";
+	private final static String REFRESH = "refresh";
 
 	public static void main(String[] argv) {
 
@@ -77,6 +83,8 @@ public class App implements ActionListener, FocusListener {
             dbUrl = prop.getProperty("db.url");
             dbUser = prop.getProperty("db.user");
             dbPass = prop.getProperty("db.password");
+            future = atoi(prop.getProperty("lookahead", "30"));
+            flags = atoi(prop.getProperty("flags", "255"));
 
         } catch (IOException e) {
             LOG.info(e.getClass().getName() + ": " + e.getMessage(), e);
@@ -102,9 +110,17 @@ public class App implements ActionListener, FocusListener {
         JScrollPane scrollPane = new JScrollPane(table);
         mainFrame.add(scrollPane, BorderLayout.CENTER);
 
-		button = new JButton("refresh");
+		button = new JButton(REFRESH);
+		button.setActionCommand(REFRESH);
 		button.addActionListener(this);
 		mainFrame.add(button, BorderLayout.PAGE_END);
+
+		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+		int x = (int) ((dimension.getWidth() - mainFrame.getWidth()) / 2);
+		int y = (int) ((dimension.getHeight() - mainFrame.getHeight()) / 2);
+		mainFrame.setLocation(x, y);
+
+		refreshList();
 
         mainFrame.setVisible(true);
 	}
@@ -116,21 +132,8 @@ public class App implements ActionListener, FocusListener {
 		String cmd = e.getActionCommand();
 		LOG.info("Action command: " + cmd);
 
-		dumpDatabase();
-
-//		switch (cmd) {
-//
-//		case ACTION_LOAD:
-//			LOG.info("Load properties");
-//			loadProperties();
-//			break;
-//
-//		case ACTION_SAVE:
-//			LOG.info("Save dump");
-//			dumpDatabase();
-//			break;
-//
-//		}
+		if (cmd.equals(REFRESH))
+			refreshList();
     }
 
 	@Override
@@ -141,16 +144,25 @@ public class App implements ActionListener, FocusListener {
 	public void focusLost(FocusEvent event) {
 	}
 
-	private void dumpDatabase() {
+	private void refreshList() {
 		Database db = new Database();
 
 		boolean conn = db.init(dbUrl, dbUser, dbPass);
 		if (!conn) {
-			// message
+			Vector<String> row = new Vector<>();
+			tableModel.addRow(row);
+
+			row = new Vector<>();
+			row.add("");
+			row.add("DB connection failure");
+			row.add("");
+			tableModel.addRow(row);
+
 			return;
 		}
 
-		db.nextBirthdays(30, tableModel);
+		tableModel.setNumRows(0);
+		db.nextBirthdays(future, tableModel);
 
 	}
 
@@ -166,5 +178,13 @@ public class App implements ActionListener, FocusListener {
     		return false;
     	}
     }
+
+	private static int atoi(String s) {
+		try {
+			return Integer.parseInt(s);
+		}
+		catch (Exception e) { }
+		return 0;
+	}
 
 }

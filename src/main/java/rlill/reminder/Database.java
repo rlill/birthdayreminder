@@ -59,7 +59,7 @@ public class Database {
 			int nowyear = cal.get(Calendar.YEAR);
 			now = cal.getTime();
 
-			cal.add(Calendar.MONTH, 1);
+			cal.add(Calendar.DAY_OF_MONTH, futureDays);
 			Date then = cal.getTime();
 
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -82,6 +82,8 @@ public class Database {
 			stmt.setString(6, df.format(now));
 			stmt.setString(7, df.format(then));
 
+			LOG.debug(String.format("Query %d days in the future from %s to %s",
+					futureDays, now.toString(), then.toString()));
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next())
