@@ -16,6 +16,9 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -45,6 +48,7 @@ public class App implements ActionListener, FocusListener {
 
 	private final static String PROPERTIES = "birthdayreminder.properties";
 	private final static String REFRESH = "refresh";
+	private final static String OPTIONS = "Options";
 
 	public static void main(String[] argv) {
 
@@ -120,6 +124,16 @@ public class App implements ActionListener, FocusListener {
 		int y = (int) ((dimension.getHeight() - mainFrame.getHeight()) / 2);
 		mainFrame.setLocation(x, y);
 
+        // create the MenuBar and add components
+    	JMenuBar mb = new JMenuBar();
+
+    	JMenu menuExtra = mb.add(new JMenu("Extra"));
+        JMenuItem menuItemOptions = menuExtra.add(new JMenuItem("Options"));
+        menuItemOptions.setActionCommand(OPTIONS);
+        menuItemOptions.addActionListener(this);
+
+        mainFrame.setJMenuBar(mb);
+
 		refreshList();
 
         mainFrame.setVisible(true);
@@ -134,6 +148,11 @@ public class App implements ActionListener, FocusListener {
 
 		if (cmd.equals(REFRESH))
 			refreshList();
+
+		if (cmd.equals(OPTIONS)) {
+			OptionsDialog o = new OptionsDialog(mainFrame);
+			o.run();
+		}
     }
 
 	@Override

@@ -1,5 +1,6 @@
 package rlill.reminder;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,17 +23,14 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
-public class Options implements ActionListener, FocusListener {
 
-	private static Logger LOG = Logger.getLogger(Options.class);
+public class OptionsDialog extends JDialog implements ActionListener, FocusListener {
 
-	private JFrame mainFrame;
+	private static final long serialVersionUID = -8440864629511879579L;
+
+	private static Logger LOG = Logger.getLogger(OptionsDialog.class);
 
 	private JLabel labelLoad;
 	private JLabel labelSave;
@@ -64,12 +63,8 @@ public class Options implements ActionListener, FocusListener {
 
 	private final static String PROPERTIES = "birthdayreminder.properties";
 
-	private void createAndShowGUI() {
-
-		// create the Frame
-		mainFrame = new JFrame("Evision To TSB Migration Query Tool");
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(600, 400);
+	public OptionsDialog(Frame pf) {
+		super(pf, "Options", true);
 
 		labelLoad = new JLabel("Properties file");
 		labelSave = new JLabel("Run query");
@@ -109,8 +104,8 @@ public class Options implements ActionListener, FocusListener {
 		buttonSave.addActionListener(this);
 
 
-		GroupLayout layout = new GroupLayout(mainFrame.getContentPane());
-		mainFrame.getContentPane().setLayout(layout);
+		GroupLayout layout = new GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
 
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
@@ -174,8 +169,11 @@ public class Options implements ActionListener, FocusListener {
 		      )
 		);
 
-        mainFrame.setVisible(true);
+		pack();
+	}
 
+	public void run() {
+		this.setVisible(true);
 	}
 
 
