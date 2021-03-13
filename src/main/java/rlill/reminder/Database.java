@@ -20,13 +20,6 @@ public class Database {
 
 	private Connection connection;
 
-	public final static String bbq1 = "select description, ? - year(event_date) as years, "
-		   + "dayofmonth(event_date) as month, month(event_date) as day from events_ann "
-		   + "where date_format(event_date, ?) between ? and ? "
-		   + "   or date_format(event_date, ?) between ? and ? "
-		   + "and (flags & ?) <> 0 "
-		   + "order by month(event_date), dayofmonth(event_date) asc";
-
 	public final static String bbq2 = "select description, "
 			+ "case when date_format(event_date, ?) between ? and ? then ? - year(event_date) "
 			+ "when date_format(event_date, ?) between ? and ? then ? - year(event_date) "
@@ -35,8 +28,8 @@ public class Database {
 			+ "when date_format(event_date, ?) between ? and ? then 1 "
 			+ "end as ysort, "
 			+ "dayofmonth(event_date) as month, month(event_date) as day from events_ann "
-			+ "where date_format(event_date, ?) between ? and ? "
-			+ "   or date_format(event_date, ?) between ? and ? "
+			+ "where (date_format(event_date, ?) between ? and ? "
+			+ "    or date_format(event_date, ?) between ? and ?) "
 			+ "and (flags & ?) <> 0 "
 			+ "order by ysort, month(event_date), dayofmonth(event_date) asc";
 
@@ -103,8 +96,10 @@ public class Database {
 
 			stmt.setInt(i++, flags);
 
-			LOG.debug(String.format("Query %d days in the future from %s to %s",
-					futureDays, now.toString(), then.toString()));
+			LOG.debug(String.format("Query %d days in the future\n with flags %d\n from %s to %s",
+					futureDays, flags, now.toString(), then.toString()));
+			LOG.debug(stmt.toString());
+
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next())

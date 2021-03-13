@@ -40,11 +40,7 @@ public class App implements ActionListener, FocusListener {
 	private DefaultTableModel tableModel;
 	private JButton button;
 
-	private String dbUrl;
-	private String dbUser;
-	private String dbPass;
-	private int future;
-	private int flags;
+	private OptionsDialog optionsDlg;
 
 	private final static String PROPERTIES = "birthdayreminder.properties";
 	private final static String REFRESH = "refresh";
@@ -83,12 +79,7 @@ public class App implements ActionListener, FocusListener {
             Properties prop = new Properties();
             prop.load(input);
 
-            // get the property values
-            dbUrl = prop.getProperty("db.url");
-            dbUser = prop.getProperty("db.user");
-            dbPass = prop.getProperty("db.password");
-            future = atoi(prop.getProperty("lookahead", "30"));
-            flags = atoi(prop.getProperty("flags", "255"));
+			optionsDlg = new OptionsDialog(mainFrame);
 
         } catch (IOException e) {
             LOG.info(e.getClass().getName() + ": " + e.getMessage(), e);
@@ -150,8 +141,7 @@ public class App implements ActionListener, FocusListener {
 			refreshList();
 
 		if (cmd.equals(OPTIONS)) {
-			OptionsDialog o = new OptionsDialog(mainFrame);
-			o.run();
+			optionsDlg.run();
 		}
     }
 
@@ -163,10 +153,10 @@ public class App implements ActionListener, FocusListener {
 	public void focusLost(FocusEvent event) {
 	}
 
-	private void refreshList() {
+	public void refreshList() {
 		Database db = new Database();
 
-		boolean conn = db.init(dbUrl, dbUser, dbPass);
+		boolean conn = db.init(optionsDlg.getDbUrl(), optionsDlg.getDbUser(), optionsDlg.getDbPass());
 		if (!conn) {
 			Vector<String> row = new Vector<>();
 			tableModel.addRow(row);
@@ -181,7 +171,7 @@ public class App implements ActionListener, FocusListener {
 		}
 
 		tableModel.setNumRows(0);
-		db.nextBirthdays(future, flags, tableModel);
+		db.nextBirthdays(optionsDlg.getLookahead(), optionsDlg.getFlags(), tableModel);
 
 	}
 
