@@ -20,7 +20,7 @@ public class Database {
 
 	private Connection connection;
 
-	public final static String bbq2 = "select description, "
+	public final static String bbq1 = "select description, "
 			+ "case when date_format(event_date, ?) between ? and ? then ? - year(event_date) "
 			+ "when date_format(event_date, ?) between ? and ? then ? - year(event_date) "
 			+ "end as years, "
@@ -32,6 +32,20 @@ public class Database {
 			+ "    or date_format(event_date, ?) between ? and ?) "
 			+ "and (flags & ?) <> 0 "
 			+ "order by ysort, month(event_date), dayofmonth(event_date) asc";
+
+	public final static String bbq2 = "select title as description, "
+			+ "case when date_format(edate, ?) between ? and ? then ? - year(edate) "
+			+ "when date_format(edate, ?) between ? and ? then ? - year(edate) "
+			+ "end as years, "
+			+ "case when date_format(edate, ?) between ? and ? then 0 "
+			+ "when date_format(edate, ?) between ? and ? then 1 "
+			+ "end as ysort, "
+			+ "dayofmonth(edate) as month, month(edate) as day from events "
+			+ "where type=1 "
+			+ "and (date_format(edate, ?) between ? and ? "
+			+ "    or date_format(edate, ?) between ? and ?) "
+			+ "and (filter & ?) <> 0 "
+			+ "order by ysort, month(edate), dayofmonth(edate) asc";
 
 	public boolean init(String url, String user, String password) {
 
