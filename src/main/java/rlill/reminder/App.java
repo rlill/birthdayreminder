@@ -14,9 +14,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
@@ -38,17 +36,15 @@ public class App implements ActionListener, FocusListener {
 
 	private JTable table;
 	private DefaultTableModel tableModel;
-	private JButton button;
 
 	private OptionsDialog optionsDlg;
 
 	private final static String PROPERTIES = "birthdayreminder.properties";
-	private final static String REFRESH = "refresh";
+	private final static String REFRESH = "Refresh";
 	private final static String OPTIONS = "Options";
+	private final static String EXIT = "Exit";
 
 	public static void main(String[] argv) {
-
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
 
 		System.setProperty("apple.awt.application.name", "Birthday Reminder");
 
@@ -105,11 +101,6 @@ public class App implements ActionListener, FocusListener {
         JScrollPane scrollPane = new JScrollPane(table);
         mainFrame.add(scrollPane, BorderLayout.CENTER);
 
-		button = new JButton(REFRESH);
-		button.setActionCommand(REFRESH);
-		button.addActionListener(this);
-		mainFrame.add(button, BorderLayout.PAGE_END);
-
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		int x = (int) ((dimension.getWidth() - mainFrame.getWidth()) / 2);
 		int y = (int) ((dimension.getHeight() - mainFrame.getHeight()) / 2);
@@ -118,10 +109,20 @@ public class App implements ActionListener, FocusListener {
         // create the MenuBar and add components
     	JMenuBar mb = new JMenuBar();
 
-    	JMenu menuExtra = mb.add(new JMenu("Extra"));
-        JMenuItem menuItemOptions = menuExtra.add(new JMenuItem("Options"));
+        JMenuItem menuItemOptions = new JMenuItem(REFRESH);
+        menuItemOptions.setActionCommand(REFRESH);
+        menuItemOptions.addActionListener(this);
+        mb.add(menuItemOptions);
+
+        menuItemOptions = new JMenuItem(OPTIONS);
         menuItemOptions.setActionCommand(OPTIONS);
         menuItemOptions.addActionListener(this);
+        mb.add(menuItemOptions);
+
+        menuItemOptions = new JMenuItem(EXIT);
+        menuItemOptions.setActionCommand(EXIT);
+        menuItemOptions.addActionListener(this);
+        mb.add(menuItemOptions);
 
         mainFrame.setJMenuBar(mb);
 
@@ -142,6 +143,10 @@ public class App implements ActionListener, FocusListener {
 
 		if (cmd.equals(OPTIONS)) {
 			optionsDlg.run();
+		}
+
+		if (cmd.equals(EXIT)) {
+			System.exit(0);
 		}
     }
 
@@ -187,13 +192,5 @@ public class App implements ActionListener, FocusListener {
     		return false;
     	}
     }
-
-	private static int atoi(String s) {
-		try {
-			return Integer.parseInt(s);
-		}
-		catch (Exception e) { }
-		return 0;
-	}
 
 }
