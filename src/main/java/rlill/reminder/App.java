@@ -181,7 +181,7 @@ public class App implements ActionListener, FocusListener {
 		}
 
 		tableModel.setNumRows(0);
-		db.nextBirthdays(future, tableModel);
+		db.nextBirthdays(future, flags, tableModel);
 
 	}
 
