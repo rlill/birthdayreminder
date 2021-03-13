@@ -79,7 +79,7 @@ public class App implements ActionListener, FocusListener {
             Properties prop = new Properties();
             prop.load(input);
 
-			optionsDlg = new OptionsDialog(mainFrame);
+			optionsDlg = new OptionsDialog(mainFrame, this);
 
         } catch (IOException e) {
             LOG.info(e.getClass().getName() + ": " + e.getMessage(), e);

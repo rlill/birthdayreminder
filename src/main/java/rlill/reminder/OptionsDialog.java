@@ -24,11 +24,13 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 
 
-public class OptionsDialog extends JDialog implements FocusListener {
+public class OptionsDialog extends JDialog implements ActionListener, FocusListener {
 
 	private static final long serialVersionUID = -8440864629511879579L;
 
 	private static Logger LOG = Logger.getLogger(OptionsDialog.class);
+
+	private App parent;
 
 	private String dbUrl;
 	private String dbUser;
@@ -48,8 +50,9 @@ public class OptionsDialog extends JDialog implements FocusListener {
 
 	private final static String PROPERTIES = "birthdayreminder.properties";
 
-	public OptionsDialog(Frame pf) {
+	public OptionsDialog(Frame pf, App pa) {
 		super(pf, "Options", true);
+		parent = pa;
 
 		JLabel labelUrl = new JLabel("DB URL");
 		JLabel labelUser = new JLabel("Username");
@@ -70,9 +73,13 @@ public class OptionsDialog extends JDialog implements FocusListener {
 		textLookahead.addFocusListener(this);
 
 		flag1 = new JCheckBox();
+		flag1.addActionListener(this);
 		flag2 = new JCheckBox();
+		flag2.addActionListener(this);
 		flag3 = new JCheckBox();
+		flag3.addActionListener(this);
 		flag4 = new JCheckBox();
+		flag4.addActionListener(this);
 
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
@@ -230,6 +237,7 @@ public class OptionsDialog extends JDialog implements FocusListener {
 		} catch (IOException e) {
 		    LOG.error(e.getClass().getName() + ": " + e.getMessage(), e);
 		}
+        parent.refreshList();
 	}
 
 	private static int atoi(String s) {
@@ -255,6 +263,11 @@ public class OptionsDialog extends JDialog implements FocusListener {
 	}
 	public int getLookahead() {
 		return lookahead;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		saveProperties();
 	}
 
 }
